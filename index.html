@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <script>
+      document.addEventListener("keydown", function(event) {
+        switch (event.key) {
+          case "ArrowLeft":
+            sendCommand("left");
+            break;
+          case "ArrowRight":
+            sendCommand("right");
+            break;
+          case "ArrowUp":
+            sendCommand("up");
+            break;
+          case "ArrowDown":
+            sendCommand("down");
+            break;
+        }
+      });
+
+      function sendCommand(direction) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "/move?dir=" + direction, true);
+        xhr.send();
+      }
+    </script>
+  </head>
+  <body>
+    <h1>ESP32 Web Server</h1>
+    <p>Use arrow keys to control the leds:</p>
+    <div>
+      <button onclick="sendCommand('left')">&larr;</button>
+      <button onclick="sendCommand('right')">&rarr;</button>
+      <button onclick="sendCommand('up')">&uarr;</button>
+      <button onclick="sendCommand('down')">&darr;</button>
+    </div>
+  </body>
+</html>
+
