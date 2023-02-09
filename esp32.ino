@@ -74,8 +74,8 @@ const long timeoutTime = 2000;
 // ########## WIFI CONFIGURATION #############
 
 // Replace with your network credentials
-const char* ssid = "Movsec 2";
-const char* password = "movsec2022!";
+const char* ssid = "WIFI SSID";
+const char* password = "WIFI PASSWORD";
 
 // Set web server port number to 80
 WiFiServer server(80);
