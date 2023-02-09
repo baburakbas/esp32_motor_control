@@ -17,14 +17,17 @@ const int enablePin2 = 4; // PWM Control Pins
 
 // Setting PWM properties
 const int freq = 30000;
-const int pwmChannel = 0;
+const int pwmChannel1 = enablePin;
+const int pwmChannel2 = enablePin2;
 const int resolution = 8;
+
+
 
 // ########## Direction Functions ###########
 
 void rigth(){
 digitalWrite(motorPin1,HIGH);
-digitalWrite(motorPin2,LOW);
+digitalWrite(motorPin2,LOW); 
 digitalWrite(motorPin3,LOW);
 digitalWrite(motorPin4,LOW);
 }
@@ -62,8 +65,9 @@ digitalWrite(motorPin4,LOW);
 
 
 
- // ##########3 Duty Cycle PWM ##########
-int dutyCycle = 200;
+ // ########## Duty Cycle PWM ##########
+int dutyCycle1 = 200;
+int dutyCycle2 = 200;
 
 unsigned long currentTime = millis();
 // Previous time
@@ -83,6 +87,7 @@ WiFiServer server(80);
 
 
 
+
 void setup() {
   // sets the pins as outputs for mmotors
   pinMode(motorPin1, OUTPUT);
@@ -97,12 +102,14 @@ void setup() {
   digitalWrite(motorPin3,LOW);
   digitalWrite(motorPin4,LOW);
   // configure LED PWM functionalitites
-  ledcSetup(pwmChannel, freq, resolution);
-  
-  // attach the channel to the GPIO to be controlled
-  ledcAttachPin(enablePin, pwmChannel);
-  ledcAttachPin(enablePin2, pwmChannel);
-  Serial.begin(115200);
+  ledcSetup(enablePin, freq, resolution);
+  ledcAttachPin(14, enablePin);
+  ledcWrite(enablePin, dutyCycle1);
+
+  // Initialize PWM for channel 2
+  ledcSetup(enablePin2, freq, resolution);
+  ledcAttachPin(4, enablePin2);
+  ledcWrite(enablePin2, dutyCycle2);
 
   // #### WIFI SETUP ####### 
 
@@ -259,7 +266,7 @@ void loop() {
       }
     }
     // Clear the header variable
-    header = "";
+    
     // Close the connection
     client.stop();
     Serial.println("Client disconnected.");
