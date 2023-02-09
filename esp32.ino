@@ -168,35 +168,51 @@ void loop() {
             // turns the GPIOs on and off
             if (header.indexOf("GET /26/on") >= 0) {
               Serial.println("GPIO 26 on");
+              output26State = "on";
+
               rigth();
               
             } else if (header.indexOf("GET /26/off") >= 0) {
               Serial.println("GPIO 26 off");
+                 output26State = "off";
+
               allLow();
               
             } else if (header.indexOf("GET /27/on") >= 0) {
               Serial.println("GPIO 27 on");
+                  output27State = "on";
+
                left();
                
               
             } else if (header.indexOf("GET /27/off") >= 0) {
               Serial.println("GPIO 27 off");
+                  output27State = "off";
+
                allLow();
               
             } else if (header.indexOf("GET /28/on") >= 0) {
               Serial.println("GPIO 28 on");
+                  output28State = "on";
+
               forward();
               
             } else if (header.indexOf("GET /28/off") >= 0) {
               Serial.println("GPIO 28 off");
+                  output28State = "off";
+
                allLow();
               
             } else if (header.indexOf("GET /29/on") >= 0) {
               Serial.println("GPIO 29 on");
+                  output29State = "on";
+
                 backward();
               
             } else if (header.indexOf("GET /29/off") >= 0) {
               Serial.println("GPIO 29 off");
+                  output29State = "off";
+
               allLow();
             }
             
