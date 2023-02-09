@@ -1,26 +1,69 @@
-// Load Wi-Fi library
-#include <WiFi.h>
-
-// Replace with your network credentials
-const char* ssid = "######";
-const char* password = "######";
-
-// Set web server port number to 80
-WiFiServer server(80);
+#include "driver/ledc.h"
+#include <WiFi.h> 
 
 String header;
 
-//Pin isimleri değiştirilecek
-String output26State = "off";
-String output27State = "off";
-String output28State = "off";
-String output29State = "off";
+// ########## MOTOR CONTROL ##########
+// Motor-1
+const int motorPin1 = 27; 
+const int motorPin2 = 26; 
+const int enablePin = 14; // PWM Control Pins
 
-//Pin isimleri değiştirilecek
-const int output26 = 26;
-const int output27 = 27;
-const int output28 = 28;
-const int output29 = 29;
+// Motor-2 
+const int motorPin3 = 17;
+const int motorPin4 = 16;
+const int enablePin2 = 4; // PWM Control Pins 
+
+
+// Setting PWM properties
+const int freq = 30000;
+const int pwmChannel = 0;
+const int resolution = 8;
+
+// ########## Direction Functions ###########
+
+void rigth(){
+digitalWrite(motorPin1,HIGH);
+digitalWrite(motorPin2,LOW);
+digitalWrite(motorPin3,LOW);
+digitalWrite(motorPin4,LOW);
+}
+
+void left(){
+digitalWrite(motorPin1,LOW);
+digitalWrite(motorPin2,LOW);
+digitalWrite(motorPin3,HIGH);
+digitalWrite(motorPin4,LOW);
+  
+}
+
+void forward(){
+digitalWrite(motorPin1,HIGH);
+digitalWrite(motorPin2,LOW);
+digitalWrite(motorPin3,HIGH);
+digitalWrite(motorPin4,LOW);
+}
+
+void backward(){
+  digitalWrite(motorPin1,LOW);
+digitalWrite(motorPin2,HIGH);
+digitalWrite(motorPin3,LOW);
+digitalWrite(motorPin4,HIGH);
+}
+
+
+void allLow(){
+digitalWrite(motorPin1,LOW);
+digitalWrite(motorPin2,LOW);
+digitalWrite(motorPin3,LOW);
+digitalWrite(motorPin4,LOW);
+}
+
+
+
+
+ // ##########3 Duty Cycle PWM ##########
+int dutyCycle = 200;
 
 unsigned long currentTime = millis();
 // Previous time
@@ -28,19 +71,40 @@ unsigned long previousTime = 0;
 // Define timeout time in milliseconds (example: 2000ms = 2s)
 const long timeoutTime = 2000;
 
+// ########## WIFI CONFIGURATION #############
+
+// Replace with your network credentials
+const char* ssid = "Movsec 2";
+const char* password = "movsec2022!";
+
+// Set web server port number to 80
+WiFiServer server(80);
+
+
+
+
 void setup() {
-    Serial.begin(115200);
-  // put your setup code here, to run once:
-  pinMode(output26,OUTPUT);
-  pinMode(output27,OUTPUT);
-  pinMode(output28,OUTPUT);
-  pinMode(output29,OUTPUT);
+  // sets the pins as outputs for mmotors
+  pinMode(motorPin1, OUTPUT);
+  pinMode(motorPin2, OUTPUT);
+  pinMode(enablePin, OUTPUT);
+  pinMode(motorPin3, OUTPUT);
+  pinMode(motorPin4, OUTPUT);
+  pinMode(enablePin2, OUTPUT);
 
-  digitalWrite(output26, LOW);
-  digitalWrite(output27, LOW);
-  digitalWrite(output28, LOW);
-  digitalWrite(output29, LOW);
+  digitalWrite(motorPin1,LOW);
+  digitalWrite(motorPin2,LOW);
+  digitalWrite(motorPin3,LOW);
+  digitalWrite(motorPin4,LOW);
+  // configure LED PWM functionalitites
+  ledcSetup(pwmChannel, freq, resolution);
+  
+  // attach the channel to the GPIO to be controlled
+  ledcAttachPin(enablePin, pwmChannel);
+  ledcAttachPin(enablePin2, pwmChannel);
+  Serial.begin(115200);
 
+  // #### WIFI SETUP ####### 
 
     // Connect to Wi-Fi network with SSID and password
   Serial.print("Connecting to ");
@@ -57,6 +121,17 @@ void setup() {
   Serial.println(WiFi.localIP());
   server.begin();
 }
+// ############## HTML Needs ############
+String output26State = "off";
+String output27State = "off";
+String output28State = "off";
+String output29State = "off";
+
+
+
+
+
+// ############### LOOP  ######################
 
 void loop() {
   WiFiClient client = server.available();   // Listen for incoming clients
@@ -86,36 +161,36 @@ void loop() {
             // turns the GPIOs on and off
             if (header.indexOf("GET /26/on") >= 0) {
               Serial.println("GPIO 26 on");
-              output26State = "on";
-              digitalWrite(output26, HIGH);
+              rigth();
+              
             } else if (header.indexOf("GET /26/off") >= 0) {
               Serial.println("GPIO 26 off");
-              output26State = "off";
-              digitalWrite(output26, LOW);
+              allLow();
+              
             } else if (header.indexOf("GET /27/on") >= 0) {
               Serial.println("GPIO 27 on");
-              output27State = "on";
-              digitalWrite(output27, HIGH);
+               left();
+               
+              
             } else if (header.indexOf("GET /27/off") >= 0) {
               Serial.println("GPIO 27 off");
-              output27State = "off";
-              digitalWrite(output27, LOW);
+               allLow();
+              
             } else if (header.indexOf("GET /28/on") >= 0) {
               Serial.println("GPIO 28 on");
-              output28State = "on";
-              digitalWrite(output28, HIGH);
+              forward();
+              
             } else if (header.indexOf("GET /28/off") >= 0) {
               Serial.println("GPIO 28 off");
-              output28State = "off";
-              digitalWrite(output28, LOW);
+               allLow();
+              
             } else if (header.indexOf("GET /29/on") >= 0) {
               Serial.println("GPIO 29 on");
-              output29State = "on";
-              digitalWrite(output29, HIGH);
+                backward();
+              
             } else if (header.indexOf("GET /29/off") >= 0) {
               Serial.println("GPIO 29 off");
-              output29State = "off";
-              digitalWrite(output29, LOW);
+              allLow();
             }
             
             // Display the HTML web page
