@@ -1,5 +1,7 @@
 #include "driver/ledc.h"
 #include <WiFi.h> 
+#include <iostream>
+#include <vector>
 
 String header;
 
@@ -48,7 +50,7 @@ digitalWrite(motorPin4,LOW);
 }
 
 void backward(){
-  digitalWrite(motorPin1,LOW);
+digitalWrite(motorPin1,LOW);
 digitalWrite(motorPin2,HIGH);
 digitalWrite(motorPin3,LOW);
 digitalWrite(motorPin4,HIGH);
@@ -78,8 +80,8 @@ const long timeoutTime = 2000;
 // ########## WIFI CONFIGURATION #############
 
 // Replace with your network credentials
-const char* ssid = "WIFI SSID";
-const char* password = "WIFI PASSWORD";
+const char* ssid = "y2m20";
+const char* password = "006y2lmz";
 
 // Set web server port number to 80
 WiFiServer server(80);
@@ -89,6 +91,7 @@ WiFiServer server(80);
 
 
 void setup() {
+  Serial.begin(9600);
   // sets the pins as outputs for mmotors
   pinMode(motorPin1, OUTPUT);
   pinMode(motorPin2, OUTPUT);
@@ -119,7 +122,7 @@ void setup() {
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print("Error");
+    Serial.println("Error");
   }
   // Print local IP address and start web server
   Serial.println("");
@@ -127,6 +130,8 @@ void setup() {
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
   server.begin();
+
+  
 }
 // ############## HTML Needs ############
 String output26State = "off";
@@ -163,6 +168,8 @@ void loop() {
             client.println("HTTP/1.1 200 OK");
             client.println("Content-type:text/html");
             client.println("Connection: close");
+            client.println("Header is:")
+            client.println(header);
             client.println();
             
             // turns the GPIOs on and off
@@ -236,7 +243,7 @@ void loop() {
             if (output26State=="off") {
               client.println("<p><a href=\"/26/on\"><button class=\"button\">ON</button></a></p>");
             } else {
-              client.println("<p><a href=\"/26/off\"><button class=\"button button2 button3 button4\">OFF</button></a></p>");
+              client.println("<p><a href=\"/26/off\"><button class=\"button button2\">OFF</button></a></p>");
             } 
                
             // Display current state, and ON/OFF buttons for GPIO 27  
@@ -245,7 +252,7 @@ void loop() {
             if (output27State=="off") {
               client.println("<p><a href=\"/27/on\"><button class=\"button\">ON</button></a></p>");
             } else {
-              client.println("<p><a href=\"/27/off\"><button class=\"button button2 button3 button4\">OFF</button></a></p>");
+              client.println("<p><a href=\"/27/off\"><button class=\"button button2\">OFF</button></a></p>");
             }
 
 
@@ -255,7 +262,7 @@ void loop() {
             if (output28State=="off") {
               client.println("<p><a href=\"/28/on\"><button class=\"button\">ON</button></a></p>");
             } else {
-              client.println("<p><a href=\"/28/off\"><button class=\"button button2 button3 button4\">OFF</button></a></p>");
+              client.println("<p><a href=\"/28/off\"><button class=\"button button2\">OFF</button></a></p>");
             } 
                
             // Display current state, and ON/OFF buttons for GPIO 29  
@@ -264,7 +271,7 @@ void loop() {
             if (output29State=="off") {
               client.println("<p><a href=\"/29/on\"><button class=\"button\">ON</button></a></p>");
             } else {
-              client.println("<p><a href=\"/29/off\"><button class=\"button button2 button3 button4\">OFF</button></a></p>");
+              client.println("<p><a href=\"/29/off\"><button class=\"button button2\">OFF</button></a></p>");
             }
             
             client.println("</body></html>");
@@ -282,6 +289,7 @@ void loop() {
       }
     }
     // Clear the header variable
+    header = "";
     
     // Close the connection
     client.stop();
