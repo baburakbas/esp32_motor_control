@@ -91,7 +91,7 @@ WiFiServer server(80);
 
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   // sets the pins as outputs for mmotors
   pinMode(motorPin1, OUTPUT);
   pinMode(motorPin2, OUTPUT);
@@ -168,7 +168,7 @@ void loop() {
             client.println("HTTP/1.1 200 OK");
             client.println("Content-type:text/html");
             client.println("Connection: close");
-            client.println("Header is:")
+            client.println("Header is:");
             client.println(header);
             client.println();
             
